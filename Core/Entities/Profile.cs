@@ -27,4 +27,5 @@ public class Profile
 
     // Soft delete
     public DateTime? DeletedAtUtc { get; set; }
+    public string? AvatarPublicId { get; set; }
 }

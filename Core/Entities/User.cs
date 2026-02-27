@@ -25,6 +25,7 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
+    public string? ProfileImageUrl { get; set; }
 
     // Navigation
     public ICollection<Scan> Scans { get; set; } = new List<Scan>();

@@ -1,10 +1,10 @@
-﻿using Application.DTOs.Auth;
+﻿
+using Application.DTOs.Profile;
 using Application.Interfaces;
+using Core.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-
-namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/profile")]
@@ -18,17 +18,16 @@ public class ProfileController : ControllerBase
         _profileService = profileService;
     }
 
+    // GET /api/profile/me
     [HttpGet("me")]
     public async Task<IActionResult> GetMe()
     {
         var userId = GetUserId();
         var profile = await _profileService.GetMyProfileAsync(userId);
-
-        if (profile is null) return NotFound(new { message = "Profile not found." });
-
         return Ok(profile);
     }
 
+    // PUT /api/profile/me
     [HttpPut("me")]
     public async Task<IActionResult> UpsertMe([FromBody] UpsertProfileRequestDto dto)
     {
@@ -37,6 +36,19 @@ public class ProfileController : ControllerBase
         return Ok(profile);
     }
 
+    // POST /api/profile/me/upload ← هنا
+    [HttpPost("me/upload")]
+    public async Task<IActionResult> UploadProfileImage([FromForm] IFormFile image)
+    {
+        if (image == null)
+            return BadRequest(new { message = "No image file provided." });
+
+        var userId = GetUserId();
+        await _profileService.UploadProfileImageAsync(userId, image);
+        return Ok(new { message = "Profile image uploaded successfully." });
+    }
+
+    // DELETE /api/profile/me
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteMe()
     {
@@ -50,7 +62,6 @@ public class ProfileController : ControllerBase
         var idStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(idStr) || !int.TryParse(idStr, out var userId))
             throw new UnauthorizedAccessException("Invalid token: missing user id claim.");
-
         return userId;
     }
 }
