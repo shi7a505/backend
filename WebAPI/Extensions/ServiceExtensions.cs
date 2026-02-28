@@ -49,6 +49,7 @@ public static class ServiceExtensions
         services.AddScoped<IReportsService, ReportsService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ICloudinaryService, CloudinaryService>();
+        services.AddSingleton<CloudinaryService>();
 
         // NEW: Profile
         services.AddScoped<IProfileService, ProfileService>();
